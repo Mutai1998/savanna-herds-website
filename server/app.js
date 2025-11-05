@@ -5,6 +5,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const emailRoutes = require("./routes/emailRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 const app = express();
 
@@ -18,10 +19,16 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // API routes
 app.use("/api", emailRoutes);
+app.use("/api/comments", commentRoutes);
+
+// Serve the comments page (HTML file)
+app.get("/comments", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "comments.html"));
+});
 
 // Default route (opens contact page)
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "contact.html"));
+app.get("/Home", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Start server

@@ -1233,30 +1233,72 @@ Each product reflects integrity, care, and a commitment to lasting partnerships.
          At SAVANNA Ltd, we take pride in delivering premium, ethically sourced chilled meat products crafted to meet your unique requirements. Whether you seek high-quality beef, lamb, or goat, our experienced team is committed to providing exceptional service and ensuring your satisfaction at every step
         </p>
 
-        <form>
+        <form id="commentForm">
           <div class="form-row">
-            <input type="text" placeholder="Your Full Name">
-            <input type="email" placeholder="Email Address">
+            <input type="text" id="fullName" placeholder="Your Full Name" required>
+            <input type="email" id="email" placeholder="Email Address" required>
           </div>
           <div class="form-row">
-            <input type="text" placeholder="Business/Company Name (if any)">
-            <input type="text" placeholder="Phone Number with Country Code">
+            <input type="text" id="company" placeholder="Business/Company Name (if any)">
+            <input type="text" id="phone" placeholder="Phone Number with Country Code">
           </div>
-          <textarea rows="3" placeholder="Write your message..."></textarea>
-
+          <textarea id="message" rows="3" placeholder="Write your message..." required></textarea>
+        
           <div class="form-row">
-            <input type="text" placeholder="Current Website URL (if any)">
+            <input type="text" id="website" placeholder="Current Website URL (if any)">
           </div>
-
+        
           <div class="form-row form-options">
-            <label><input type="checkbox"> Chilled Lamb</label>
-            <label><input type="checkbox"> Chilled Goats</label>
-            <label><input type="checkbox"> Chilled Beef</label>
-            <label><input type="checkbox"> Customized Package</label>
+            <label><input type="checkbox" value="Chilled Lamb" class="product"> Chilled Lamb</label>
+            <label><input type="checkbox" value="Chilled Goats" class="product"> Chilled Goats</label>
+            <label><input type="checkbox" value="Chilled Beef" class="product"> Chilled Beef</label>
+            <label><input type="checkbox" value="Customized Package" class="product"> Customized Package</label>
           </div>
-
+        
           <button type="submit" class="submit-btn">Submit Request</button>
         </form>
+        
+        <p id="statusMsg"></p>
+        
+        <script>
+          document.getElementById("commentForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Collect checked products
+            const selectedProducts = Array.from(document.querySelectorAll(".product:checked"))
+              .map(cb => cb.value)
+              .join(", ");
+
+            const data = {
+              fullName: document.getElementById("fullName").value,
+              email: document.getElementById("email").value,
+              company: document.getElementById("company").value,
+              phone: document.getElementById("phone").value,
+              website: document.getElementById("website").value,
+              message: document.getElementById("message").value,
+              products: selectedProducts
+            };
+
+            try {
+              const response = await fetch("/api/comments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              });
+
+              if (response.ok) {
+                document.getElementById("statusMsg").textContent = "✅ Thank you! Your request has been submitted.";
+                document.getElementById("commentForm").reset();
+              } else {
+                document.getElementById("statusMsg").textContent = "❌ Error submitting form. Please try again.";
+              }
+            } catch (err) {
+              console.error("Error submitting form:", err);
+              document.getElementById("statusMsg").textContent = "❌ Network error. Please try again.";
+            }
+          });
+        </script>
+
       </div>
 
       <!-- RIGHT: ANIMATED QUOTES BACKGROUND -->
