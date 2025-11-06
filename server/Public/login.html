@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <style>
+        .error-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-600 to-purple-700 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Admin Dashboard</h1>
+            <p class="text-gray-600">Sign in to access the admin panel</p>
+        </div>
+
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input type="email" id="email" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    placeholder="admin@example.com">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <input type="password" id="password" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Enter your password">
+            </div>
+
+            <button type="submit" id="loginBtn"
+                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                <span id="loginText">Sign In</span>
+                <svg id="loginSpinner" class="hidden animate-spin ml-2 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+            </button>
+
+            <div id="loginError"
+                class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"></div>
+        </form>
+
+        <!-- Demo credentials reminder -->
+        <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h3 class="text-sm font-medium text-blue-800 mb-2">Demo Credentials:</h3>
+            <p class="text-xs text-blue-600">Make sure you have created a user in Firebase Authentication with admin
+                role in Firestore.</p>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBep4jQH0rwTxTptSPzATnv3I8t7mC7FBY",
+            authDomain: "savannaherds-a96de.firebaseapp.com",
+            projectId: "savannaherds-a96de",
+            storageBucket: "savannaherds-a96de.firebasestorage.app",
+            messagingSenderId: "991286200421",
+            appId: "1:991286200421:web:9a654232d433d37b7b1e8c",
+            measurementId: "G-1BT6SW1RQN"
+        };
+
+        // Initialize Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+        }
+
+        const auth = firebase.auth();
+
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginText = document.getElementById('loginText');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const loginError = document.getElementById('loginError');
+
+        // Clear any existing authentication on login page
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+
+        // Login functionality
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showLoginError('Please enter both email and password');
+                return;
+            }
+
+            try {
+                showLoginError('', false);
+                setLoginButtonState(true);
+
+                // Sign in with Firebase Auth
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Get the Firebase ID token
+                const idToken = await user.getIdToken();
+
+                // Send token to your backend for verification and role info
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: idToken })
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+
+                    //Check if user has admin role
+                    if (userData.role !== 'admin') {
+                        showLoginError('Access denied. Admin privileges required.');
+                        await auth.signOut();
+                        return;
+                    }
+
+                    // Save to localStorage
+                    localStorage.setItem('authToken', idToken);
+                    localStorage.setItem('currentUser', JSON.stringify(userData));
+
+                    // Redirect to admin dashboard
+                    window.location.href = 'admin.html';
+                } else {
+                    const errorData = await response.json();
+                    showLoginError(errorData.error || 'Login failed');
+                    await auth.signOut();
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+
+                // Handle specific Firebase auth errors
+                if (error.code === 'auth/invalid-email') {
+                    showLoginError('Invalid email address');
+                } else if (error.code === 'auth/user-not-found') {
+                    showLoginError('No user found with this email');
+                } else if (error.code === 'auth/wrong-password') {
+                    showLoginError('Incorrect password');
+                } else if (error.code === 'auth/too-many-requests') {
+                    showLoginError('Too many failed attempts. Please try again later.');
+                } else if (error.code === 'auth/network-request-failed') {
+                    showLoginError('Network error. Please check your connection.');
+                } else {
+                    showLoginError('Login failed. Please try again.');
+                }
+
+                try {
+                    await auth.signOut();
+                } catch (signOutError) {
+                    console.error('Sign out error:', signOutError);
+                }
+            } finally {
+                setLoginButtonState(false);
+            }
+        });
+
+        // Helper functions
+        function setLoginButtonState(loading) {
+            if (loading) {
+                loginBtn.disabled = true;
+                loginText.textContent = 'Signing in...';
+                loginSpinner.classList.remove('hidden');
+            } else {
+                loginBtn.disabled = false;
+                loginText.textContent = 'Sign In';
+                loginSpinner.classList.add('hidden');
+            }
+        }
+
+        function showLoginError(message, show = true) {
+            if (show && message) {
+                loginError.textContent = message;
+                loginError.classList.remove('hidden');
+                loginError.classList.add('error-shake');
+                setTimeout(() => {
+                    loginError.classList.remove('error-shake');
+                }, 500);
+            } else {
+                loginError.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <span id="userEmail" class="text-sm text-gray-700"></span>
+            <span id="userRole"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"></span>
+          </div>
+          <button id="logoutBtn"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex h-[calc(100vh-4rem)]">
+    <!-- Sidebar -->
+    <nav class="w-64 bg-white border-r border-gray-200">
+      <div class="p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6">Admin Panel</h2>
+        <div class="space-y-2">
+          <button onclick="loadSection('comments')"
+            class="nav-btn active w-full text-left px-4 py-3 rounded-lg transition-colors duration-200">
+            <span class="flex items-center space-x-3">
+              <span>💬</span>
+              <span>Comments</span>
+            </span>
+          </button>
+          <button onclick="loadSection('users')"
+            class="nav-btn w-full text-left px-4 py-3 rounded-lg transition-colors duration-200">
+            <span class="flex items-center space-x-3">
+              <span>👥</span>
+              <span>Users</span>
+            </span>
+          </button>
+          <button onclick="loadSection('site-content')"
+            class="nav-btn w-full text-left px-4 py-3 rounded-lg transition-colors duration-200">
+            <span class="flex items-center space-x-3">
+              <span>🏠</span>
+              <span>Site Content</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h1 id="sectionTitle" class="text-2xl font-bold text-gray-900">Comments Management</h1>
+          <div id="sectionActions"></div>
+        </div>
+
+        <div id="contentArea" class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <!-- Dynamic content loads here -->
+          <div class="flex items-center justify-center h-32">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBep4jQH0rwTxTptSPzATnv3I8t7mC7FBY",
+      authDomain: "savannaherds-a96de.firebaseapp.com",
+      projectId: "savannaherds-a96de",
+      storageBucket: "savannaherds-a96de.firebasestorage.app",
+      messagingSenderId: "991286200421",
+      appId: "1:991286200421:web:9a654232d433d37b7b1e8c",
+      measurementId: "G-1BT6SW1RQN"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Global variables
+    let currentUser = null;
+    let authToken = null;
+
+    // DOM Elements
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userEmail = document.getElementById('userEmail');
+    const userRole = document.getElementById('userRole'); // Fixed: was 'role'
+    const contentArea = document.getElementById('contentArea');
+    const sectionTitle = document.getElementById('sectionTitle');
+    const sectionActions = document.getElementById('sectionActions');
+
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', async function () {
+      const savedToken = localStorage.getItem('authToken');
+      const savedUser = localStorage.getItem('currentUser');
+
+      if (!savedToken || !savedUser) {
+        console.log('No saved token or user found, redirecting to login');
+        redirectToLogin();
+        return;
+      }
+
+      try {
+        authToken = savedToken;
+        currentUser = JSON.parse(savedUser);
+
+        // Verify token with backend - FIXED VERSION
+        const verificationResult = await verifyTokenWithBackend(savedToken);
+
+        if (verificationResult.valid) {
+          console.log('Token verified successfully');
+          // Update current user with fresh data from backend
+          currentUser = verificationResult.userData;
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          initializeDashboard();
+        } else {
+          console.log('Token verification failed:', verificationResult.error);
+          redirectToLogin();
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        redirectToLogin();
+      }
+    });
+
+    // Initialize dashboard
+    function initializeDashboard() {
+      console.log('Initializing dashboard for user:', currentUser.email);
+      userEmail.textContent = currentUser.email;
+      userRole.textContent = currentUser.role;
+      loadSection('comments');
+    }
+
+    // Logout functionality
+    logoutBtn.addEventListener('click', async function () {
+      try {
+        await auth.signOut();
+      } catch (error) {
+        console.error('Firebase signout error:', error);
+      } finally {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        redirectToLogin();
+      }
+    });
+
+    // Navigation functions
+    function loadSection(section, event) {
+      // Update active nav button
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-blue-50', 'text-blue-700', 'border-blue-200');
+        btn.classList.add('text-gray-700', 'hover:bg-gray-50');
+      });
+
+      if (event) {
+        event.currentTarget.classList.add('active', 'bg-blue-50', 'text-blue-700', 'border', 'border-blue-200');
+        event.currentTarget.classList.remove('text-gray-700', 'hover:bg-gray-50');
+      } else {
+        // For initial load, activate the comments button
+        const commentsBtn = document.querySelector('.nav-btn');
+        if (commentsBtn) {
+          commentsBtn.classList.add('active', 'bg-blue-50', 'text-blue-700', 'border', 'border-blue-200');
+          commentsBtn.classList.remove('text-gray-700', 'hover:bg-gray-50');
+        }
+      }
+
+      const titleMap = {
+        comments: "Comments Management",
+        users: "User Management",
+        "site-content": "Site Content Management"
+      };
+
+      sectionTitle.textContent = titleMap[section];
+      contentArea.innerHTML = `
+        <div class="flex items-center justify-center h-32">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      `;
+      sectionActions.innerHTML = '';
+
+      // Use setTimeout to allow the UI to update before loading content
+      setTimeout(() => {
+        switch (section) {
+          case "comments":
+            loadCommentsSection();
+            break;
+          case "users":
+            loadUsersSection();
+            break;
+          case "site-content":
+            loadSiteContentSection();
+            break;
+        }
+      }, 100);
+    }
+
+    // Fetch data with authentication
+    async function fetchData(url, options = {}) {
+      const defaultHeaders = {
+        'Authorization': `Bearer ${authToken}`
+      };
+
+      const finalOptions = {
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          ...(options.headers || {})
+        }
+      };
+
+      if (finalOptions.body && typeof finalOptions.body === 'object' && !(finalOptions.body instanceof FormData)) {
+        finalOptions.body = JSON.stringify(finalOptions.body);
+        if (!finalOptions.headers['Content-Type']) {
+          finalOptions.headers['Content-Type'] = 'application/json';
+        }
+      }
+
+      console.log('Fetching data from:', url);
+      const res = await fetch(url, finalOptions);
+
+      if (res.status === 401) {
+        console.log('Received 401, redirecting to login');
+        redirectToLogin();
+        throw new Error('Authentication required');
+      }
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Fetch error:', res.status, errorText);
+        throw new Error(`Failed to fetch data: ${res.status} ${res.statusText} - ${errorText}`);
+      }
+
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        return res.json();
+      } else {
+        return res.text();
+      }
+    }
+
+    // ============= COMMENT MANAGEMENT =============
+    async function loadCommentsSection() {
+      if (currentUser.role === 'admin') {
+        sectionActions.innerHTML = `
+          <button onclick="showAddCommentForm()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+            + Add Comment
+          </button>
+        `;
+      }
+
+      try {
+        const comments = await fetchData('/api/comments');
+        renderComments(comments);
+      } catch (error) {
+        console.error('Error loading comments:', error);
+        contentArea.innerHTML = `
+          <div class="p-8 text-center">
+            <div class="text-red-600 mb-2">Error loading comments</div>
+            <div class="text-gray-500 text-sm">${error.message}</div>
+          </div>
+        `;
+      }
+    }
+
+    function renderComments(comments) {
+      if (!comments || !comments.length) {
+        contentArea.innerHTML = `
+          <div class="p-8 text-center text-gray-500">
+            No comments found.
+          </div>
+        `;
+        return;
+      }
+
+      const table = `
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              ${comments.map(c => `
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${escapeHtml(c.fullName || '')}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${escapeHtml(c.email || '')}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${escapeHtml(c.company || "-")}</td>
+                  <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">${escapeHtml(c.message || '')}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ${c.imageUrl ? `<img src="${escapeHtml(c.imageUrl)}" class="h-12 w-12 object-cover rounded" alt="Comment image">` : "No image"}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.approved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                      ${c.approved ? "Approved" : "Pending"}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                    ${!c.approved && currentUser.role === 'admin' ? `<button onclick="approveComment('${escapeHtml(c.id)}')" class="text-green-600 hover:text-green-900">Approve</button>` : ''}
+                    ${currentUser.role === 'admin' ? `<button onclick="editComment('${escapeHtml(c.id)}')" class="text-blue-600 hover:text-blue-900">Edit</button>` : ''}
+                    ${currentUser.role === 'admin' ? `<button onclick="deleteComment('${escapeHtml(c.id)}')" class="text-red-600 hover:text-red-900">Delete</button>` : ''}
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+      contentArea.innerHTML = table;
+    }
+
+    // ============= USER MANAGEMENT =============
+    async function loadUsersSection() {
+      if (currentUser.role === 'admin') {
+        sectionActions.innerHTML = `
+          <button onclick="showAddUserForm()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+            + Add User
+          </button>
+        `;
+      }
+
+      try {
+        const users = await fetchData('/api/users');
+        renderUsers(users);
+      } catch (error) {
+        console.error('Error loading users:', error);
+        contentArea.innerHTML = `
+          <div class="p-8 text-center">
+            <div class="text-red-600 mb-2">Error loading users</div>
+            <div class="text-gray-500 text-sm">${error.message}</div>
+          </div>
+        `;
+      }
+    }
+
+    function renderUsers(users) {
+      if (!users || !users.length) {
+        contentArea.innerHTML = `
+          <div class="p-8 text-center text-gray-500">
+            No users found.
+          </div>
+        `;
+        return;
+      }
+
+      const table = `
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              ${users.map(u => `
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${escapeHtml(u.name || "-")}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${escapeHtml(u.email || '')}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
+                      ${u.role}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                    ${currentUser.role === 'admin' ? `<button onclick="editUser('${escapeHtml(u.uid)}')" class="text-blue-600 hover:text-blue-900">Edit</button>` : ''}
+                    ${currentUser.role === 'admin' && u.uid !== currentUser.uid ? `<button onclick="deleteUser('${escapeHtml(u.uid)}')" class="text-red-600 hover:text-red-900">Delete</button>` : ''}
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+      contentArea.innerHTML = table;
+    }
+
+    function showAddUserForm() {
+      const form = `
+        <div class="p-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Add New User</h3>
+          <form id="addUserForm" class="space-y-4 max-w-md">
+            <div>
+              <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <input type="email" id="userEmail" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label for="userPassword" class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+              <input type="password" id="userPassword" name="password" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
+              <input type="text" id="userName" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label for="userRole" class="block text-sm font-medium text-gray-700 mb-1">Role *</label>
+              <select id="userRole" name="role" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="flex space-x-3 pt-4">
+              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors duration-200">
+                Add User
+              </button>
+              <button type="button" onclick="loadSection('users')" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md font-medium transition-colors duration-200">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+
+      contentArea.innerHTML = form;
+
+      document.getElementById('addUserForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+
+        try {
+          await fetchData('/api/users', {
+            method: 'POST',
+            body: data
+          });
+
+          loadSection('users');
+        } catch (error) {
+          console.error('Error adding user:', error);
+          alert('Error adding user: ' + error.message);
+        }
+      });
+    }
+
+    async function editUser(id) {
+      const newRole = prompt("Enter new role (admin/user):");
+      if (!newRole) return;
+
+      try {
+        await fetchData(`/api/users/${id}`, {
+          method: "PUT",
+          body: { role: newRole }
+        });
+        loadSection('users');
+      } catch (error) {
+        console.error('Error editing user:', error);
+        alert('Error editing user: ' + error.message);
+      }
+    }
+
+    async function deleteUser(id) {
+      if (confirm("Are you sure you want to delete this user?")) {
+        try {
+          await fetchData(`/api/users/${id}`, { method: "DELETE" });
+          loadSection('users');
+        } catch (error) {
+          console.error('Error deleting user:', error);
+          alert('Error deleting user: ' + error.message);
+        }
+      }
+    }
+
+    // ============= SITE CONTENT MANAGEMENT =============
+    async function loadSiteContentSection() {
+      try {
+        const siteContent = await fetchData('/api/site/content');
+        renderSiteContent(siteContent);
+      } catch (error) {
+        console.error('Error loading site content:', error);
+        renderSiteContent({});
+      }
+    }
+
+    function renderSiteContent(content) {
+      const form = `
+        <div class="p-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Homepage Content</h3>
+          <form id="siteContentForm" class="space-y-4 max-w-2xl">
+            <div>
+              <label for="heroTitle" class="block text-sm font-medium text-gray-700 mb-1">Hero Title</label>
+              <input type="text" id="heroTitle" name="heroTitle" value="${escapeHtml(content.heroTitle || '')}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label for="heroSubtitle" class="block text-sm font-medium text-gray-700 mb-1">Hero Subtitle</label>
+              <textarea id="heroSubtitle" name="heroSubtitle" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-24">${escapeHtml(content.heroSubtitle || '')}</textarea>
+            </div>
+            <div>
+              <label for="aboutText" class="block text-sm font-medium text-gray-700 mb-1">About Text</label>
+              <textarea id="aboutText" name="aboutText" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-32">${escapeHtml(content.aboutText || '')}</textarea>
+            </div>
+            <div>
+              <label for="contactInfo" class="block text-sm font-medium text-gray-700 mb-1">Contact Information</label>
+              <textarea id="contactInfo" name="contactInfo" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-24">${escapeHtml(content.contactInfo || '')}</textarea>
+            </div>
+            <div class="pt-4">
+              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors duration-200">
+                Update Homepage
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+
+      contentArea.innerHTML = form;
+
+      document.getElementById('siteContentForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+
+        try {
+          await fetchData('/api/site/content', {
+            method: "PUT",
+            body: data
+          });
+
+          alert('Homepage content updated successfully');
+        } catch (error) {
+          console.error('Error updating site content:', error);
+          alert('Error updating site content: ' + error.message);
+        }
+      });
+    }
+
+    // Helper functions - FIXED VERSION
+    async function verifyTokenWithBackend(token) {
+      try {
+        const response = await fetch('/api/auth/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          console.log('Token verification successful:', userData);
+          return {
+            valid: true,
+            userData: userData
+          };
+        } else {
+          const errorData = await response.json();
+          console.log('Token verification failed with status:', response.status, errorData);
+          return {
+            valid: false,
+            error: errorData.error || 'Verification failed'
+          };
+        }
+      } catch (error) {
+        console.error('Token verification network error:', error);
+        return {
+          valid: false,
+          error: 'Network error during verification'
+        };
+      }
+    }
+
+    function redirectToLogin() {
+      console.log('Redirecting to login page');
+      window.location.href = 'login.html';
+    }
+
+    function escapeHtml(unsafe) {
+      if (unsafe === null || unsafe === undefined) return '';
+      return unsafe
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Comment functions
+    async function approveComment(id) {
+      try {
+        await fetchData(`/api/comments/${id}/approve`, { method: "PUT" });
+        loadSection('comments');
+      } catch (error) {
+        console.error('Error approving comment:', error);
+        alert('Error approving comment: ' + error.message);
+      }
+    }
+
+  async function editComment(id) {
+    try {
+      console.log('Editing comment with ID:', id);
+
+      // Show loading state
+      contentArea.innerHTML = `
+      <div class="flex items-center justify-center h-32">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span class="ml-2 text-gray-600">Loading comment...</span>
+      </div>
+    `;
+
+      // Try to fetch the comment
+      const response = await fetch(`/api/comments/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('Error response:', errorText);
+        throw new Error(`Server returned ${response.status}: ${errorText}`);
+      }
+
+      const comment = await response.json();
+      console.log('Comment data loaded:', comment);
+      showEditCommentForm(comment);
+
+    } catch (error) {
+      console.error('Error fetching comment for edit:', error);
+      contentArea.innerHTML = `
+      <div class="p-8 text-center">
+        <div class="text-red-600 mb-2">Error loading comment</div>
+        <div class="text-gray-500 text-sm mb-4">${error.message}</div>
+        <div class="text-xs text-gray-400 mb-4">Comment ID: ${id}</div>
+        <button onclick="loadSection('comments')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+          Back to Comments
+        </button>
+      </div>
+    `;
+    }
+  }
+  function showEditCommentForm(comment) {
+    const form = `
+    <div class="p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Comment</h3>
+      <form id="editCommentForm" class="space-y-4 max-w-2xl">
+        <input type="hidden" id="commentId" value="${escapeHtml(comment.id)}">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="editFullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <input type="text" id="editFullName" value="${escapeHtml(comment.fullName || '')}" required 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
+            <label for="editEmail" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <input type="email" id="editEmail" value="${escapeHtml(comment.email || '')}" required 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="editCompany" class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+            <input type="text" id="editCompany" value="${escapeHtml(comment.company || '')}" 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
+            <label for="editProducts" class="block text-sm font-medium text-gray-700 mb-1">Products</label>
+            <input type="text" id="editProducts" value="${escapeHtml(comment.products || '')}" 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          </div>
+        </div>
+
+        <div>
+          <label for="editMessage" class="block text-sm font-medium text-gray-700 mb-1">Message *</label>
+          <textarea id="editMessage" required 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 h-32">${escapeHtml(comment.message || '')}</textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Current Image</label>
+          <div class="flex items-center space-x-4">
+            ${comment.imageUrl ? `
+              <div class="flex flex-col items-start space-y-2">
+                <img src="${escapeHtml(comment.imageUrl)}" class="h-20 w-20 object-cover rounded border" alt="Current comment image">
+                <div class="flex items-center">
+                  <input type="checkbox" id="removeImage" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                  <label for="removeImage" class="ml-2 text-sm text-gray-700">Remove current image</label>
+                </div>
+              </div>
+            ` : `
+              <span class="text-gray-500 text-sm">No image attached</span>
+            `}
+          </div>
+        </div>
+
+        <div>
+          <label for="newImage" class="block text-sm font-medium text-gray-700 mb-1">New Image (optional)</label>
+          <input type="file" id="newImage" accept="image/*" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+          <p class="text-xs text-gray-500 mt-1">Select a new image to replace the current one</p>
+        </div>
+
+        <div class="flex items-center">
+          <input type="checkbox" id="editApproved" ${comment.approved ? 'checked' : ''} 
+                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+          <label for="editApproved" class="ml-2 text-sm text-gray-700">Approve this comment</label>
+        </div>
+
+        <div class="flex space-x-3 pt-4">
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors duration-200 flex items-center">
+            <span id="submitText">Update Comment</span>
+            <svg id="submitSpinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </button>
+          <button type="button" onclick="loadSection('comments')" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md font-medium transition-colors duration-200">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  `;
+
+    contentArea.innerHTML = form;
+
+    document.getElementById('editCommentForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const submitBtn = document.querySelector('button[type="submit"]');
+      const submitText = document.getElementById('submitText');
+      const submitSpinner = document.getElementById('submitSpinner');
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitText.textContent = 'Updating...';
+      submitSpinner.classList.remove('hidden');
+
+      const commentId = document.getElementById('commentId').value;
+      const formData = new FormData();
+
+      // Add text fields to form data
+      formData.append('fullName', document.getElementById('editFullName').value);
+      formData.append('email', document.getElementById('editEmail').value);
+      formData.append('company', document.getElementById('editCompany').value);
+      formData.append('message', document.getElementById('editMessage').value);
+      formData.append('products', document.getElementById('editProducts').value);
+      formData.append('approved', document.getElementById('editApproved').checked);
+
+      // Handle image removal/upload
+      const removeImageCheckbox = document.getElementById('removeImage');
+      const newImageInput = document.getElementById('newImage');
+      const newImage = newImageInput.files[0];
+
+      if (removeImageCheckbox && removeImageCheckbox.checked) {
+        formData.append('removeImage', 'true');
+      }
+
+      if (newImage) {
+        formData.append('image', newImage);
+      }
+
+      try {
+        console.log('Submitting comment update...');
+        await fetchData(`/api/comments/${commentId}`, {
+          method: 'PUT',
+          body: formData
+        });
+
+        loadSection('comments');
+      } catch (error) {
+        console.error('Error updating comment:', error);
+        alert('Error updating comment: ' + error.message);
+
+        // Reset button state
+        submitBtn.disabled = false;
+        submitText.textContent = 'Update Comment';
+        submitSpinner.classList.add('hidden');
+      }
+    });
+  }
+   
+
+    async function deleteComment(id) {
+      if (confirm("Are you sure you want to delete this comment?")) {
+        try {
+          await fetchData(`/api/comments/${id}`, { method: "DELETE" });
+          loadSection('comments');
+        } catch (error) {
+          console.error('Error deleting comment:', error);
+          alert('Error deleting comment: ' + error.message);
+        }
+      }
+    }
+
+    function showAddCommentForm() {
+      // Add your add comment form implementation
+      alert('Add comment form would go here');
+    }
+
+    // Make functions globally available for onclick handlers
+    window.loadSection = loadSection;
+    window.showAddUserForm = showAddUserForm;
+    window.editUser = editUser;
+    window.deleteUser = deleteUser;
+    window.approveComment = approveComment;
+    window.editComment = editComment;
+    window.deleteComment = deleteComment;
+    window.showAddCommentForm = showAddCommentForm;
+  </script>
+</body>
+
+</html>
