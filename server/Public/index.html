@@ -141,7 +141,7 @@
       position: absolute;
       inset: 0;
       background: #157604;
-      z-index: 1;
+  
       height: 0%;
       transition: height 0.4s ease;
       border-radius: 16px;
@@ -190,7 +190,7 @@
   <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm transition-all duration-300">
     <div class="container mx-auto px-4 py-3 flex items-center justify-between">
       <a href="index.html" class="flex items-center group">
-        <div class="flex items-center">
+        <div class="flex items-center ml-8">
           <img src="assets/img/logo33.png" alt="Savanna Herds Logo"
             class="h-12 mr-3 transition-transform duration-300 group-hover:scale-110">
           <span class="text-primary text-xl font-medium">Savanna Herds Ltd</span>
@@ -253,20 +253,318 @@
           <span
             class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
         </a>
+      <a href="/login"
+        class="hidden lg:inline-block bg-primary text-white px-6 py-2.5 rounded-full hover:bg-green-800 transition duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+        Login </a>
+
       </nav>
 
-      <a href="#about"
-        class="hidden lg:inline-block bg-primary text-white px-6 py-2.5 rounded-full hover:bg-green-800 transition duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">Get
-        Started</a>
-<a href="/login" class="hidden lg:inline-block bg-primary text-white px-6 py-2.5 rounded-full hover:bg-green-800 transition duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"> Login </a>
-
-      <button class="lg:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition duration-300">
-        <i class="bi bi-list text-2xl"></i>
-      </button>
+    
+      
     </div>
   </header>
+ <!-- Add this toggle button to your header -->
+<button id="sidebarToggle"
+  class="lg:hidden fixed top-2 left-2 z-50 bg-primary text-white p-4 rounded shadow-lg hover:bg-green-800 transition duration-300">
+  <i class="bi bi-list text-xl"></i>
+</button>
+
+<!-- Updated Sidebar -->
+<aside id="sidebar"
+  class=" lg:hidden fixed left-0 top-0 h-full w-64 bg-white shadow-2xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-40 lg:z-auto overflow-y-auto">
+  <div class="p-6">
+    <!-- Close button for mobile -->
+    <button id="sidebarClose" class="lg:hidden absolute top-4 right-4 text-gray-600 hover:text-primary">
+      <i class="bi bi-x-lg text-xl"></i>
+    </button>
+
+    <!-- Logo -->
+    <div class="mb-8">
+      <a href="index.html" class="flex items-center">
+        <img src="assets/img/logo33.png" alt="Savanna Herds Logo" class="h-10 mr-3">
+        <span class="text-primary text-lg font-bold">Savanna Herds</span>
+      </a>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="space-y-4">
+      <a href="#hero"
+        class="flex items-center text-primary font-medium py-2 px-4 rounded-lg bg-primary/5 transition duration-300 group">
+        <i class="bi bi-house-door mr-3"></i>
+        <span>Home</span>
+        <span
+          class="ml-auto w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+      </a>
+
+      <a href="#about"
+        class="flex items-center text-gray-700 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 group">
+        <i class="bi bi-info-circle mr-3"></i>
+        <span>About Us</span>
+        <span
+          class="ml-auto w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+      </a>
+
+      <a href="#services"
+        class="flex items-center text-gray-700 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 group">
+        <i class="bi bi-box-seam mr-3"></i>
+        <span>Products</span>
+        <span
+          class="ml-auto w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+      </a>
+
+      <a href="#portfolio"
+        class="flex items-center text-gray-700 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 group">
+        <i class="bi bi-graph-up-arrow mr-3"></i>
+        <span>Our Impacts</span>
+        <span
+          class="ml-auto w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+      </a>
+
+      <!-- Our Company Dropdown -->
+      <div class="relative group">
+        <button
+          class="flex items-center justify-between w-full text-gray-700 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300">
+          <div class="flex items-center">
+            <i class="bi bi-building mr-3"></i>
+            <span>Our Company</span>
+          </div>
+          <i class="bi bi-chevron-down transition-transform duration-300 group-hover:rotate-180"></i>
+        </button>
+
+        <div class="ml-6 mt-2 space-y-2 max-h-0 overflow-hidden group-hover:max-h-96 transition-all duration-500">
+          <a href="#customersatisfaction"
+            class="flex items-center text-gray-600 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 text-sm">
+            <i class="bi bi-person-check mr-3"></i>
+            Customer Satisfaction
+          </a>
+          <a href="#"
+            class="flex items-center text-gray-600 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 text-sm">
+            <i class="bi bi-recycle mr-3"></i>
+            Sustainability
+          </a>
+          <a href="#"
+            class="flex items-center text-gray-600 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 text-sm">
+            <i class="bi bi-globe mr-3"></i>
+            Global Reach
+          </a>
+          <a href="#"
+            class="flex items-center text-gray-600 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 text-sm">
+            <i class="bi bi-award mr-3"></i>
+            Quality Assurance
+          </a>
+          <a href="#"
+            class="flex items-center text-gray-600 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 text-sm">
+            <i class="bi bi-leaf mr-3"></i>
+            Organic Approach
+          </a>
+        </div>
+      </div>
+
+      <a href="#contact"
+        class="flex items-center text-gray-700 hover:text-primary py-2 px-4 rounded-lg hover:bg-primary/5 transition duration-300 group">
+        <i class="bi bi-telephone mr-3"></i>
+        <span>Contact</span>
+        <span
+          class="ml-auto w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+      </a>
+
+      <!-- Login Button -->
+      <a href="/login"
+        class="flex items-center justify-center bg-primary text-white py-3 px-4 rounded-lg hover:bg-green-800 transition duration-300 transform hover:scale-105 mt-6">
+        <i class="bi bi-box-arrow-in-right mr-2"></i>
+        <span>Login</span>
+      </a>
+    </nav>
+
+    <!-- Social Links -->
+    <div class="mt-8 pt-6 border-t border-gray-200">
+      <div class="flex justify-center space-x-4">
+        <a href="#" class="text-gray-400 hover:text-primary transition duration-300">
+          <i class="bi bi-twitter-x text-xl"></i>
+        </a>
+        <a href="#" class="text-gray-400 hover:text-primary transition duration-300">
+          <i class="bi bi-facebook text-xl"></i>
+        </a>
+        <a href="#" class="text-gray-400 hover:text-primary transition duration-300">
+          <i class="bi bi-instagram text-xl"></i>
+        </a>
+        <a href="#" class="text-gray-400 hover:text-primary transition duration-300">
+          <i class="bi bi-linkedin text-xl"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Overlay for mobile -->
+<div id="sidebarOverlay"
+  class="fixed inset-0 bg-black/50 z-30 lg:hidden opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+<!-- Update your main content to account for sidebar -->
+<main class="lg:ml-64 transition-all duration-300">
+  <!-- Your existing main content here -->
+  <div class="container mx-auto px-4">
+    <!-- All your sections (hero, about, services, etc.) -->
+  </div>
+</main>
+
+<script>
+  // Sidebar toggle functionality
+  document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarClose = document.getElementById('sidebarClose');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const mainContent = document.querySelector('main');
+
+    // Toggle sidebar
+    function toggleSidebar() {
+      const isOpen = sidebar.classList.contains('translate-x-0');
+
+      if (isOpen) {
+        // Close sidebar
+        sidebar.classList.remove('translate-x-0');
+        sidebar.classList.add('-translate-x-full');
+        sidebarOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+        sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        // Open sidebar
+        sidebar.classList.remove('-translate-x-full');
+        sidebar.classList.add('translate-x-0');
+        sidebarOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        sidebarOverlay.classList.add('opacity-100', 'pointer-events-auto');
+      }
+    }
+
+    // Event listeners
+    sidebarToggle.addEventListener('click', toggleSidebar);
+    sidebarClose.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // Close sidebar when clicking on nav links (mobile only)
+    const navLinks = sidebar.querySelectorAll('a[href^="#"]');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth < 1024) { // Only on mobile
+          toggleSidebar();
+        }
+      });
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function () {
+      if (window.innerWidth >= 1024) {
+        // On large screens, ensure sidebar is visible
+        sidebar.classList.remove('-translate-x-full');
+        sidebar.classList.add('translate-x-0');
+        sidebarOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+        sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        // On small screens, ensure sidebar is hidden by default
+        sidebar.classList.remove('translate-x-0');
+        sidebar.classList.add('-translate-x-full');
+      }
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Add active state to current section in sidebar
+    function updateActiveNavLink() {
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('#sidebar a[href^="#"]');
+
+      let currentSection = '';
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+          currentSection = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('text-primary', 'bg-primary/5');
+        const href = link.getAttribute('href').substring(1);
+        if (href === currentSection) {
+          link.classList.add('text-primary', 'bg-primary/5');
+        }
+      });
+    }
+
+    // Update active nav link on scroll
+    window.addEventListener('scroll', updateActiveNavLink);
+    updateActiveNavLink(); // Initial call
+  });
+</script>
+
+<style>
+  /* Custom scrollbar for sidebar */
+  #sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  #sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  #sidebar::-webkit-scrollbar-thumb {
+    background: #157604;
+    border-radius: 2px;
+  }
+
+  #sidebar::-webkit-scrollbar-thumb:hover {
+    background: #0f5303;
+  }
+
+  /* Animation for dropdown */
+  .group:hover .group-hover\\:max-h-96 {
+    max-height: 24rem;
+  }
+
+  /* Ensure smooth transitions */
+  .transition-all {
+    transition-property: all;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 1023px) {
+    main {
+      margin-left: 0 !important;
+    }
+  }
+
+  /* Desktop optimizations */
+  @media (min-width: 1024px) {
+    #sidebarToggle {
+      display: none;
+    }
+
+    #sidebarClose {
+      display: none;
+    }
+
+    #sidebarOverlay {
+      display: none;
+    }
+  }
+</style>
 
   <main>
+
+    
     <!-- Hero Section -->
     <section id="hero" class="relative bg-gray-900 min-h-screen flex items-center justify-center overflow-hidden">
       <div class="absolute inset-0 bg-black/40 z-0"></div>
@@ -1593,9 +1891,8 @@
   <!-- JavaScript for form submission -->
   
 
-  <!-- JavaScript for testimonials -->
- <script>
-  // Function to fetch and display approved comments with animations
+<script>
+    // Function to fetch and display approved comments with professional carousel
   async function loadTestimonials() {
     try {
       const response = await fetch('/api/comments');
@@ -1614,324 +1911,280 @@
 
       if (approvedComments.length === 0) {
         container.innerHTML = `
-            <div class="swiper-slide">
-              <div class="bg-white rounded-2xl p-8 shadow-lg text-center h-full border border-gray-100 animate-fade-in">
-                <p class="text-gray-700 mb-6 text-lg">
-                  <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
-                  <span class="mx-2">Be the first to share your experience with Savanna Herds! Your feedback helps us grow and serve you better.</span>
-                  <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
-                </p>
-                <img src="assets/img/signal.png" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20" alt="">
-                <h3 class="text-primary text-2xl font-bold mb-2">Share Your Story</h3>
-                <h4 class="text-gray-600 text-lg">Join our community of satisfied customers</h4>
-              </div>
+          <div class="swiper-slide">
+            <div class="bg-white rounded-2xl p-8 shadow-lg text-center h-full border border-gray-100">
+              <p class="text-gray-700 mb-6 text-lg">
+                <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
+                <span class="mx-2">Be the first to share your experience with Savanna Herds! Your feedback helps us grow and serve you better.</span>
+                <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
+              </p>
+              <img src="assets/img/signal.png" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20" alt="">
+              <h3 class="text-primary text-2xl font-bold mb-2">Share Your Story</h3>
+              <h4 class="text-gray-600 text-lg">Join our community of satisfied customers</h4>
             </div>
-          `;
+          </div>
+        `;
         return;
       }
 
       // Clear container first
       container.innerHTML = '';
 
-      // Generate HTML for approved comments with staggered animations
+      // Generate HTML for all approved comments (initially hidden)
       approvedComments.forEach((comment, index) => {
         const slide = document.createElement('div');
-        slide.className = 'swiper-slide';
+        slide.className = `swiper-slide testimonial-item ${index === 0 ? 'active' : ''}`;
+        slide.setAttribute('data-index', index);
         slide.innerHTML = `
-            <div class="bg-white rounded-2xl p-8 shadow-lg text-center h-full border border-gray-100 transform transition duration-500 hover:scale-105 opacity-0 translate-y-8 animate-testimonial" style="animation-delay: ${index * 200}ms">
-              <p class="text-gray-700 mb-6 text-lg">
-                <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
-                <span class="mx-2">${escapeHtml(comment.message)}</span>
-                <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
-              </p>
-              ${comment.imageUrl ?
-            `<img src="${escapeHtml(comment.imageUrl)}" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20" alt="${escapeHtml(comment.fullName)}'s testimonial image">` :
-            `<img src="assets/img/signal.png" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20" alt="Default profile image">`
+          <div class="bg-white rounded-2xl p-8 shadow-lg text-center h-full border border-gray-100 testimonial-card">
+            <p class="text-gray-700 mb-6 text-lg testimonial-text">
+              <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
+              <span class="mx-2">${escapeHtml(comment.message)}</span>
+              <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
+            </p>
+            ${comment.imageUrl ?
+          `<img src="${escapeHtml(comment.imageUrl)}" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20 testimonial-image" alt="${escapeHtml(comment.fullName)}'s testimonial image">` :
+          `<img src="assets/img/signal.png" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20 testimonial-image" alt="Default profile image">`
           }
-              <h3 class="text-primary text-2xl font-bold mb-2">${escapeHtml(comment.fullName)}</h3>
-              <h4 class="text-gray-600 text-lg mb-2">
-                ${comment.company ? `${escapeHtml(comment.company)}` : ''}
-                ${comment.company && comment.products ? ' - ' : ''}
-                ${comment.products ? `${escapeHtml(comment.products)}` : ''}
-                ${!comment.company && !comment.products ? 'Valued Customer' : ''}
-              </h4>
-              ${comment.email ? `<small class="text-gray-500">${escapeHtml(comment.email)}</small>` : ''}
-            </div>
-          `;
+            <h4 class="text-primary text-xl font-bold mb-2 testimonial-name">${escapeHtml(comment.fullName)}</h4>
+            <h4 class="text-gray-600 text-lg mb-2 testimonial-company">
+              ${comment.company ? `${escapeHtml(comment.company)}` : ''}
+              ${!comment.company && !comment.products ? 'Valued Customer' : ''}
+            </h4>
+          </div>
+        `;
         container.appendChild(slide);
       });
 
-      // Add CSS for animations
-      if (!document.getElementById('testimonial-animations')) {
-        const style = document.createElement('style');
-        style.id = 'testimonial-animations';
-        style.textContent = `
-            @keyframes testimonialSlideIn {
-              0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-              }
-              100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-              }
-            }
-            
-            @keyframes testimonialFadeIn {
-              0% {
-                opacity: 0;
-                transform: translateX(-20px);
-              }
-              100% {
-                opacity: 1;
-                transform: translateX(0);
-              }
-            }
-            
-            @keyframes testimonialBounceIn {
-              0% {
-                opacity: 0;
-                transform: scale(0.3) rotate(-5deg);
-              }
-              50% {
-                opacity: 1;
-                transform: scale(1.05) rotate(2deg);
-              }
-              100% {
-                opacity: 1;
-                transform: scale(1) rotate(0);
-              }
-            }
-            
-            .animate-testimonial {
-              animation: testimonialSlideIn 0.8s ease-out forwards;
-            }
-            
-            .animate-testimonial-fade {
-              animation: testimonialFadeIn 0.6s ease-out forwards;
-            }
-            
-            .animate-testimonial-bounce {
-              animation: testimonialBounceIn 0.8s ease-out forwards;
-            }
-            
-            /* Stagger animation for multiple items */
-            .testimonial-stagger > *:nth-child(1) { animation-delay: 0ms; }
-            .testimonial-stagger > *:nth-child(2) { animation-delay: 150ms; }
-            .testimonial-stagger > *:nth-child(3) { animation-delay: 300ms; }
-            .testimonial-stagger > *:nth-child(4) { animation-delay: 450ms; }
-            .testimonial-stagger > *:nth-child(5) { animation-delay: 600ms; }
-            .testimonial-stagger > *:nth-child(6) { animation-delay: 750ms; }
-          `;
-        document.head.appendChild(style);
-      }
-
-      // Reinitialize Swiper after loading dynamic content
-      if (typeof testimonialsSwiper !== 'undefined') {
-        setTimeout(() => {
-          testimonialsSwiper.update();
-        }, approvedComments.length * 200 + 500); // Wait for animations to complete
-      }
+      // Start the professional carousel
+      startProfessionalCarousel(approvedComments);
 
     } catch (error) {
       console.error('Error loading testimonials:', error);
       const container = document.getElementById('testimonials-container');
       container.innerHTML = `
-          <div class="swiper-slide">
-            <div class="bg-white rounded-2xl p-8 shadow-lg text-center border border-gray-100 animate-fade-in">
-              <p class="text-gray-700 mb-6 text-lg">
-                <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
-                <span class="mx-2">We're experiencing technical difficulties loading testimonials. Please check back soon to see what our customers are saying about us!</span>
-                <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
-              </p>
-              <img src="assets/img/signal.png" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20" alt="">
-              <h3 class="text-primary text-2xl font-bold mb-2">Testimonials Coming Soon</h3>
-              <h4 class="text-gray-600 text-lg">Check back later</h4>
-            </div>
+        <div class="swiper-slide">
+          <div class="bg-white rounded-2xl p-8 shadow-lg text-center border border-gray-100">
+            <p class="text-gray-700 mb-6 text-lg">
+              <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
+              <span class="mx-2">We're experiencing technical difficulties loading testimonials. Please check back soon to see what our customers are saying about us!</span>
+              <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
+            </p>
+            <img src="assets/img/signal.png" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20" alt="">
+            <h3 class="text-primary text-2xl font-bold mb-2">Testimonials Coming Soon</h3>
+            <h4 class="text-gray-600 text-lg">Check back later</h4>
           </div>
-        `;
+        </div>
+      `;
     }
   }
 
-  // Alternative function with different animation styles
-  function loadTestimonialsWithCarousel() {
-    loadTestimonials().then(() => {
-      // Initialize auto-rotation of testimonials
-      startTestimonialRotation();
-    });
-  }
-
-  // Auto-rotation function for testimonials
-  function startTestimonialRotation() {
+    // Professional carousel with slide-in/slide-out effects
+    function startProfessionalCarousel(comments) {
     const container = document.getElementById('testimonials-container');
-    if (!container) return;
-
+    const slides = container.querySelectorAll('.testimonial-item');
     let currentIndex = 0;
-    const slides = container.querySelectorAll('.swiper-slide');
+    const totalSlides = slides.length;
 
-    if (slides.length <= 1) return; // No need to rotate if only one testimonial
-
-    function showNextTestimonial() {
-      // Hide all slides
-      slides.forEach(slide => {
-        slide.style.opacity = '0';
-        slide.style.transform = 'translateX(100%)';
-        slide.style.transition = 'all 0.8s ease-in-out';
-      });
-
-      // Show current slide
-      if (slides[currentIndex]) {
-        slides[currentIndex].style.opacity = '1';
-        slides[currentIndex].style.transform = 'translateX(0)';
-      }
-
-      // Move to next slide
-      currentIndex = (currentIndex + 1) % slides.length;
-    }
-
-    // Start rotation (change every 5 seconds)
-    setInterval(showNextTestimonial, 5000);
-
-    // Show first testimonial immediately
-    setTimeout(() => {
+    if (totalSlides <= 1) {
+      // If only one testimonial, just show it
       if (slides[0]) {
         slides[0].style.opacity = '1';
         slides[0].style.transform = 'translateX(0)';
       }
-      currentIndex = 1;
-    }, 100);
-  }
+      return;
+    }
 
-  // Enhanced version with typewriter effect
-  async function loadTestimonialsWithTypewriter() {
-    try {
-      const response = await fetch('/api/comments');
-      if (!response.ok) throw new Error('Failed to fetch testimonials');
+    // Function to show a specific slide
+    function showSlide(index) {
+      // Hide all slides first
+      slides.forEach((slide, i) => {
+        slide.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
 
-      const comments = await response.json();
-      const approvedComments = comments.filter(comment => comment.approved === true);
-      const container = document.getElementById('testimonials-container');
-
-      if (approvedComments.length === 0) {
-        container.innerHTML = `
-            <div class="swiper-slide">
-              <div class="bg-white rounded-2xl p-8 shadow-lg text-center h-full border border-gray-100">
-                <p class="text-gray-700 mb-6 text-lg">
-                  <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
-                  <span class="mx-2">Be the first to share your experience with Savanna Herds!</span>
-                  <i class="bi bi-quote text-primary text-3xl opacity-50"></i>
-                </p>
-                <img src="assets/img/signal.png" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20" alt="">
-                <h3 class="text-primary text-2xl font-bold mb-2">Share Your Story</h3>
-                <h4 class="text-gray-600 text-lg">Join our community of satisfied customers</h4>
-              </div>
-            </div>
-          `;
-        return;
-      }
-
-      container.innerHTML = '';
-
-      // Create slides with typewriter effect
-      approvedComments.forEach((comment, index) => {
-        const slide = document.createElement('div');
-        slide.className = `swiper-slide testimonial-slide-${index}`;
-        slide.style.opacity = '0';
-        slide.innerHTML = `
-            <div class="bg-white rounded-2xl p-8 shadow-lg text-center h-full border border-gray-100">
-              <p class="text-gray-700 mb-6 text-lg typewriter-text" id="typewriter-${index}"></p>
-              ${comment.imageUrl ?
-            `<img src="${escapeHtml(comment.imageUrl)}" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20 testimonial-image" style="opacity: 0; transform: scale(0)" alt="${escapeHtml(comment.fullName)}'s testimonial image">` :
-            `<img src="assets/img/signal.png" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/20 testimonial-image" style="opacity: 0; transform: scale(0)" alt="Default profile image">`
-          }
-              <h3 class="text-primary text-2xl font-bold mb-2 testimonial-name" style="opacity: 0; transform: translateY(20px)">${escapeHtml(comment.fullName)}</h3>
-              <h4 class="text-gray-600 text-lg mb-2 testimonial-details" style="opacity: 0; transform: translateY(20px)">
-                ${comment.company ? `${escapeHtml(comment.company)}` : ''}
-                ${comment.company && comment.products ? ' - ' : ''}
-                ${comment.products ? `${escapeHtml(comment.products)}` : ''}
-                ${!comment.company && !comment.products ? 'Valued Customer' : ''}
-              </h4>
-              ${comment.email ? `<small class="text-gray-500 testimonial-email" style="opacity: 0">${escapeHtml(comment.email)}</small>` : ''}
-            </div>
-          `;
-        container.appendChild(slide);
+        if (i === index) {
+          // Current slide - slide in from right
+          slide.style.opacity = '1';
+          slide.style.transform = 'translateX(0)';
+          slide.style.zIndex = '10';
+          slide.classList.add('active');
+        } else if (i === (index - 1 + totalSlides) % totalSlides) {
+          // Previous slide - slide out to left
+          slide.style.opacity = '0';
+          slide.style.transform = 'translateX(-100%)';
+          slide.style.zIndex = '5';
+          slide.classList.remove('active');
+        } else {
+          // Other slides - hidden
+          slide.style.opacity = '0';
+          slide.style.transform = 'translateX(100%)';
+          slide.style.zIndex = '1';
+          slide.classList.remove('active');
+        }
       });
+    }
 
-      // Animate testimonials sequentially
-      animateTestimonialsSequentially(approvedComments);
+    // Function to go to next slide
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % totalSlides;
+      showSlide(currentIndex);
+    }
 
-    } catch (error) {
-      console.error('Error loading testimonials:', error);
-      // Error handling as before...
+    // Function to go to previous slide
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+      showSlide(currentIndex);
+    }
+
+    // Auto-advance slides
+    let autoSlideInterval = setInterval(nextSlide, 5000); // Change every 5 seconds
+
+    // Pause auto-slide on hover
+    container.addEventListener('mouseenter', () => {
+      clearInterval(autoSlideInterval);
+    });
+
+    container.addEventListener('mouseleave', () => {
+      autoSlideInterval = setInterval(nextSlide, 5000);
+    });
+
+    // Add navigation controls
+    addNavigationControls(prevSlide, nextSlide);
+
+    // Initialize first slide
+    setTimeout(() => {
+      showSlide(currentIndex);
+    }, 100);
+
+    // Update Swiper if it exists
+    if (typeof testimonialsSwiper !== 'undefined') {
+      setTimeout(() => {
+        testimonialsSwiper.update();
+      }, 500);
     }
   }
 
-  // Animate testimonials one by one with typewriter effect
-  function animateTestimonialsSequentially(comments) {
-    comments.forEach((comment, index) => {
-      setTimeout(() => {
-        const slide = document.querySelector(`.testimonial-slide-${index}`);
-        if (!slide) return;
+    // Add navigation controls to the testimonial section
+    function addNavigationControls(prevSlide, nextSlide) {
+      const testimonialSection = document.querySelector('.testimonials-section');
+      if (!testimonialSection) return;
 
-        // Fade in slide
-        slide.style.transition = 'opacity 0.8s ease-in-out';
-        slide.style.opacity = '1';
+    // Remove existing controls if any
+    const existingControls = testimonialSection.querySelector('.testimonial-controls');
+    if (existingControls) {
+      existingControls.remove();
+    }
 
-        // Typewriter effect for text
-        const textElement = document.getElementById(`typewriter-${index}`);
-        const fullText = `"${escapeHtml(comment.message)}"`;
-        let charIndex = 0;
+    const controlsHTML = `
+      <div class="testimonial-controls flex justify-center items-center mt-8 space-x-4">
+        <button class="testimonial-prev-btn w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center hover:bg-green-800 transition duration-300 transform hover:scale-110 shadow-lg">
+          <i class="bi bi-chevron-left text-xl"></i>
+        </button>
+        <button class="testimonial-next-btn w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center hover:bg-green-800 transition duration-300 transform hover:scale-110 shadow-lg">
+          <i class="bi bi-chevron-right text-xl"></i>
+        </button>
+      </div>
+    `;
 
-        function typeWriter() {
-          if (charIndex < fullText.length) {
-            textElement.innerHTML = `<i class="bi bi-quote text-primary text-3xl opacity-50"></i> ${fullText.substring(0, charIndex + 1)} <i class="bi bi-quote text-primary text-3xl opacity-50"></i>`;
-            charIndex++;
-            setTimeout(typeWriter, 30); // Adjust typing speed here
-          } else {
-            // After typing completes, animate other elements
-            setTimeout(() => {
-              const image = slide.querySelector('.testimonial-image');
-              const name = slide.querySelector('.testimonial-name');
-              const details = slide.querySelector('.testimonial-details');
-              const email = slide.querySelector('.testimonial-email');
+    testimonialSection.insertAdjacentHTML('beforeend', controlsHTML);
 
-              if (image) {
-                image.style.transition = 'all 0.6s ease-out';
-                image.style.opacity = '1';
-                image.style.transform = 'scale(1)';
-              }
+    // Add event listeners
+    const prevBtn = testimonialSection.querySelector('.testimonial-prev-btn');
+    const nextBtn = testimonialSection.querySelector('.testimonial-next-btn');
 
-              if (name) {
-                name.style.transition = 'all 0.6s ease-out 0.2s';
-                name.style.opacity = '1';
-                name.style.transform = 'translateY(0)';
-              }
+    if (prevBtn) {
+      prevBtn.addEventListener('click', prevSlide);
+    }
 
-              if (details) {
-                details.style.transition = 'all 0.6s ease-out 0.4s';
-                details.style.opacity = '1';
-                details.style.transform = 'translateY(0)';
-              }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', nextSlide);
+    }
+  }
 
-              if (email) {
-                email.style.transition = 'all 0.6s ease-out 0.6s';
-                email.style.opacity = '1';
-              }
-            }, 500);
-          }
+    // Enhanced professional carousel with fade effects
+    function startEnhancedCarousel(comments) {
+      const container = document.getElementById('testimonials-container');
+      const slides = container.querySelectorAll('.testimonial-item');
+      let currentIndex = 0;
+      const totalSlides = slides.length;
+
+    if (totalSlides <= 1) {
+      if (slides[0]) {
+        slides[0].style.opacity = '1';
+        slides[0].style.transform = 'translateX(0) scale(1)';
+      }
+      return;
+    }
+
+    // Enhanced slide transition with fade effects
+    function showEnhancedSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+        if (i === index) {
+          // Current slide - enter from right
+          slide.style.opacity = '1';
+          slide.style.transform = 'translateX(0) scale(1)';
+          slide.style.zIndex = '20';
+          slide.style.filter = 'blur(0px)';
+        } else if (i === (index - 1 + totalSlides) % totalSlides) {
+          // Previous slide - exit to left with fade
+          slide.style.opacity = '0';
+          slide.style.transform = 'translateX(-50%) scale(0.9)';
+          slide.style.zIndex = '10';
+          slide.style.filter = 'blur(2px)';
+        } else if (i === (index + 1) % totalSlides) {
+          // Next slide - prepare from right
+          slide.style.opacity = '0';
+          slide.style.transform = 'translateX(50%) scale(0.9)';
+          slide.style.zIndex = '10';
+          slide.style.filter = 'blur(2px)';
+        } else {
+          // Other slides - hidden
+          slide.style.opacity = '0';
+          slide.style.transform = 'translateX(100%) scale(0.8)';
+          slide.style.zIndex = '1';
+          slide.style.filter = 'blur(4px)';
         }
+      });
+    }
 
-        typeWriter();
+    function nextEnhancedSlide() {
+      currentIndex = (currentIndex + 1) % totalSlides;
+      showEnhancedSlide(currentIndex);
+    }
 
-      }, index * 3000); // Delay between each testimonial (3 seconds)
+    // Auto-advance with enhanced effects
+    let enhancedInterval = setInterval(nextEnhancedSlide, 5000);
+
+    // Hover controls
+    container.addEventListener('mouseenter', () => {
+      clearInterval(enhancedInterval);
     });
 
-    // Reinitialize Swiper after all animations
+    container.addEventListener('mouseleave', () => {
+      enhancedInterval = setInterval(nextEnhancedSlide, 5000);
+    });
+
+    // Add enhanced navigation
+    addNavigationControls(
+      () => {
+        currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+        showEnhancedSlide(currentIndex);
+      },
+      nextEnhancedSlide
+    );
+
+    // Initialize
     setTimeout(() => {
-      if (typeof testimonialsSwiper !== 'undefined') {
+      showEnhancedSlide(currentIndex);
+    }, 100);
+
+    // Update Swiper
+    if (typeof testimonialsSwiper !== 'undefined') {
+      setTimeout(() => {
         testimonialsSwiper.update();
-      }
-    }, comments.length * 3000 + 2000);
+      }, 500);
+    }
   }
 
   // Utility function to escape HTML
@@ -1946,23 +2199,24 @@
       .replace(/'/g, "&#039;");
   }
 
-  // Choose which animation style to use
-  const ANIMATION_STYLE = 'stagger'; // Options: 'stagger', 'carousel', 'typewriter'
+    // Choose carousel style
+    const CAROUSEL_STYLE = 'professional'; // Options: 'professional', 'enhanced'
 
   // Load testimonials when page loads
   document.addEventListener('DOMContentLoaded', function () {
-    switch (ANIMATION_STYLE) {
-      case 'carousel':
-        loadTestimonialsWithCarousel();
-        break;
-      case 'typewriter':
-        loadTestimonialsWithTypewriter();
-        break;
-      case 'stagger':
-      default:
-        loadTestimonials();
-        break;
+    // Add testimonial section class for styling
+    const testimonialSection = document.querySelector('#testimonials');
+    if (testimonialSection) {
+      testimonialSection.classList.add('testimonials-section');
     }
+
+    // Load testimonials with selected carousel style
+    loadTestimonials().then(() => {
+      if (CAROUSEL_STYLE === 'enhanced') {
+        startEnhancedCarousel();
+      }
+      // Default is professional style which runs in loadTestimonials
+    });
 
     // Optional: Refresh testimonials every 30 seconds for real-time updates
     setInterval(loadTestimonials, 30000);
@@ -1971,90 +2225,140 @@
 
 <!-- Add this CSS to your stylesheet or in a style tag -->
 <style>
-  /* Animation styles for testimonials */
-  @keyframes slideInFromBottom {
-    0% {
-      opacity: 0;
-      transform: translateY(50px) scale(0.9);
-    }
-
-    100% {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+  /* Professional Testimonial Carousel Styles */
+  .testimonials-section {
+    position: relative;
+    overflow: hidden;
   }
 
-  @keyframes fadeInScale {
-    0% {
-      opacity: 0;
-      transform: scale(0.8);
-    }
-
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
+  #testimonials-container {
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
   }
 
-  @keyframes slideInFromRight {
-    0% {
-      opacity: 0;
-      transform: translateX(100px);
-    }
-
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-    }
+  .testimonial-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
   }
 
-  .testimonial-animate {
-    animation: slideInFromBottom 0.8s ease-out forwards;
+  .testimonial-item.active {
+    pointer-events: all;
   }
 
-  .testimonial-fade-in {
-    animation: fadeInScale 0.6s ease-out forwards;
-  }
-
-  .testimonial-slide-in {
-    animation: slideInFromRight 0.7s ease-out forwards;
-  }
-
-  /* Staggered animation delays */
-  .testimonial-stagger-1 {
-    animation-delay: 0.1s;
-  }
-
-  .testimonial-stagger-2 {
-    animation-delay: 0.2s;
-  }
-
-  .testimonial-stagger-3 {
-    animation-delay: 0.3s;
-  }
-
-  .testimonial-stagger-4 {
-    animation-delay: 0.4s;
-  }
-
-  .testimonial-stagger-5 {
-    animation-delay: 0.5s;
-  }
-
-  .testimonial-stagger-6 {
-    animation-delay: 0.6s;
-  }
-
-  /* Hover effects */
   .testimonial-card {
+    transform-origin: center;
     transition: all 0.3s ease;
   }
 
-  .testimonial-card:hover {
+  .testimonial-item:hover .testimonial-card {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Enhanced carousel styles */
+  .testimonial-item.enhanced {
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Navigation controls */
+  .testimonial-controls {
+    z-index: 30;
+    position: relative;
+  }
+
+  .testimonial-prev-btn,
+  .testimonial-next-btn {
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Loading animation */
+  @keyframes testimonialLoad {
+    0% {
+      opacity: 0;
+      transform: translateX(100px) scale(0.95);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  @keyframes testimonialExit {
+    0% {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateX(-100px) scale(0.95);
+    }
+  }
+
+  .testimonial-enter {
+    animation: testimonialLoad 0.8s ease-out forwards;
+  }
+
+  .testimonial-exit {
+    animation: testimonialExit 0.8s ease-out forwards;
+  }
+
+  /* Progress indicator */
+  .testimonial-progress {
+    height: 3px;
+    background: linear-gradient(90deg, #157604, #c57b05);
+    width: 0%;
+    transition: width 5s linear;
+  }
+
+  .testimonial-item.active~.testimonial-progress {
+    width: 100%;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #testimonials-container {
+      min-height: 450px;
+    }
+
+    .testimonial-controls {
+      margin-top: 1.5rem;
+    }
+
+    .testimonial-prev-btn,
+    .testimonial-next-btn {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  /* Accessibility improvements */
+  .testimonial-item:focus {
+    outline: 2px solid #157604;
+    outline-offset: 2px;
+  }
+
+  .testimonial-controls button:focus {
+    outline: 2px solid #157604;
+    outline-offset: 2px;
   }
 </style>
+
+<!-- Add progress indicator HTML (optional) -->
+<div class="testimonial-progress-container mt-4">
+  <div class="testimonial-progress"></div>
+</div>
 
   <!-- Initialize AOS -->
   <script>

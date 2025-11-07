@@ -2,7 +2,7 @@ const { initializeApp, cert } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 const { getStorage } = require('firebase-admin/storage');
 
-const serviceAccount = require("./accountkey.json");
+const serviceAccount = require("./savannaherds-a96de-firebase-adminsdk-fbsvc-1654b6ae03.json");
 
 // Initialize the Firebase Admin SDK
 const app = initializeApp({
